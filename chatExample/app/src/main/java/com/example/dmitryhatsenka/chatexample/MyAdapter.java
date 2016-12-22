@@ -13,27 +13,27 @@ import android.widget.TextView;
 import java.util.List;
 
 public class MyAdapter extends ArrayAdapter<ScanResult> {
-    Context context;
-    int layoutResourceId;
-    List<ScanResult> data;
-    LayoutInflater inflater;
+    Context mContext;
+    int mLayoutResourceId;
+    List<ScanResult> mData;
+    LayoutInflater mInflater;
 
     public MyAdapter(Context context, int layoutResourceId, List<ScanResult> data) {
         super(context, layoutResourceId, data);
-        this.context = context;
-        this.layoutResourceId = layoutResourceId;
-        this.data = data;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.mContext = context;
+        this.mLayoutResourceId = layoutResourceId;
+        this.mData = data;
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return mData.size();
     }
 
     @Override
     public ScanResult getItem(int position) {
-        return data.get(position);
+        return mData.get(position);
     }
 
     @Override
@@ -44,8 +44,9 @@ public class MyAdapter extends ArrayAdapter<ScanResult> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
+
         if (view == null) {
-            view = inflater.inflate(R.layout.row, parent, false);
+            view = mInflater.inflate(R.layout.row, parent, false);
         }
 
         ScanResult point = getItem(position);

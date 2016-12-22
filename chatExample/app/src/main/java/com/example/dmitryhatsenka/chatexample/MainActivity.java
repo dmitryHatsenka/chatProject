@@ -22,36 +22,33 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION = 1001;
-
-    private WifiManager wifiManager;
-    private WifiReceiver wifiReceiver;
-
-    ListView listView;
-    Handler h;
-    Runnable scan;
-
-    Button startBtn;
-    Button stopBtn;
+    private WifiManager mWifiManager;
+    private WifiReceiver mWifiReceiver;
+    ListView mListView;
+    Handler mHand;
+    Runnable mScan;
+    Button mStartBtn;
+    Button mStopBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.list_view);
-        startBtn = (Button) findViewById(R.id.startBtn);
-        stopBtn = (Button) findViewById(R.id.stopBtn);
-        h = new Handler();
+        mListView = (ListView) findViewById(R.id.list_view);
+        mStartBtn = (Button) findViewById(R.id.startBtn);
+        mStopBtn = (Button) findViewById(R.id.stopBtn);
+        mHand = new Handler();
 
-        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        wifiReceiver = new WifiReceiver();
+        mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        mWifiReceiver = new WifiReceiver();
 
-        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        registerReceiver(mWifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 
-        if (!wifiManager.isWifiEnabled()) {
+        if (!mWifiManager.isWifiEnabled()) {
             Toast.makeText(getApplicationContext(), "Wifi is disabled..making it enabled",
                     Toast.LENGTH_LONG).show();
-            wifiManager.setWifiEnabled(true);
+            mWifiManager.setWifiEnabled(true);
         }
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
@@ -61,54 +58,56 @@ public class MainActivity extends AppCompatActivity {
                     PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION);
         }
 
-        scan = new Runnable() {
+        mScan = new Runnable() {
             @Override
             public void run() {
-                wifiManager.startScan();
+                mWifiManager.startScan();
                 Toast.makeText(getApplicationContext(), "Scanning",
                         Toast.LENGTH_SHORT).show();
-                h.postDelayed(scan, 5000);
+                mHand.postDelayed(mScan, 5000);
             }
         };
     }
 
     @Override
     protected void onResume() {
-        if (startBtn.getVisibility() == View.GONE) {
-            registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        if (mStartBtn.getVisibility() == View.GONE) {
+            registerReceiver(mWifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         }
+
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        if (startBtn.getVisibility() == View.GONE) {
-            unregisterReceiver(wifiReceiver);
+        if (mStartBtn.getVisibility() == View.GONE) {
+            unregisterReceiver(mWifiReceiver);
         }
+
         super.onPause();
     }
 
     public void startScan(View view) {
-        h.post(scan);
-        startBtn.setVisibility(View.GONE);
-        stopBtn.setVisibility(View.VISIBLE);
+        mHand.post(mScan);
+        mStartBtn.setVisibility(View.GONE);
+        mStopBtn.setVisibility(View.VISIBLE);
     }
 
     public void stopScan(View view) {
-        h.removeCallbacks(scan);
-        startBtn.setVisibility(View.VISIBLE);
-        stopBtn.setVisibility(View.GONE);
+        mHand.removeCallbacks(mScan);
+        mStartBtn.setVisibility(View.VISIBLE);
+        mStopBtn.setVisibility(View.GONE);
     }
 
     class WifiReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
-                List<ScanResult> scanResults = wifiManager.getScanResults();
+                List<ScanResult> scanResults = mWifiManager.getScanResults();
 
                 MyAdapter adapter = new MyAdapter(getApplicationContext(), R.layout.row, scanResults);
 
-                listView.setAdapter(adapter);
+                mListView.setAdapter(adapter);
             }
         }
     }
