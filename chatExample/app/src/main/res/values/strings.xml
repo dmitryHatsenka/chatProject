@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ChatExample</string>
+    <string name="startBtn">Start</string>
+    <string name="stopBtn">Stop</string>
+</resources>
